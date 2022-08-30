@@ -15,24 +15,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HelloTasklet2 implements Tasklet{
 	
-	@Value("#{JobExecutionContext[jobKey]}")
+	@Value(value = "#{JobExecutionContext['jobKey']}")
 	private String jobValue;
 	
-	@Value("#{StepExecutionContext[stepKey]}")
+	@Value(value = "#{StepExecutionContext['stepKey']}")
 	private String stepValue;
 	
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-		log.info("Hello WOrdl2");
+		log.info("Hello Tasklet2");
 		
-		// JobExecutionContextから値を取得
-		log.info("jobKey={}", jobValue);
+		log.info("jobKey={}:", jobValue);
 		
-		// StepExecutionContextから値を取得
-		log.info("stepkey={}", stepValue);
+		log.info("stepKey={}:", stepValue);
 		
 		return RepeatStatus.FINISHED;
-		
 	}
 
 }

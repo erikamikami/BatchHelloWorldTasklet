@@ -16,7 +16,7 @@ import com.example.tasklet.HelloTasklet2;
 
 @Configuration
 @EnableBatchProcessing
-public class BatchConfig {
+public class HelloTaskletConfig {
 	
 	@Autowired
 	private JobBuilderFactory jobBuilderFactory;
@@ -24,34 +24,32 @@ public class BatchConfig {
 	@Autowired
 	private StepBuilderFactory stepBuilderFactory;
 	
-	// HelloTasklet
 	@Autowired
 	@Qualifier("HelloTasklet")
 	private HelloTasklet helloTasklet;
 	
-	// HelloTasklet2
 	@Autowired
 	@Qualifier("HelloTasklet2")
 	private HelloTasklet2 helloTasklet2;
 	
-	// Stepの作成
+	// TaskletのStepを生成
 	@Bean
-	public Step HelloTaskletStep1() {
+	public Step HelloTaskletStep() {
 		return stepBuilderFactory.get("HelloTaskletStep").tasklet(helloTasklet).build();
 	}
 	
-	// Stepの生成
+	// TaskletのStepを生成
 	@Bean
 	public Step HelloTaskletStep2() {
 		return stepBuilderFactory.get("HelloTaskletStep2").tasklet(helloTasklet2).build();
 	}
 	
-	// jobの作成
+	// jobの生成
 	@Bean
-	public Job HelloTaskletJob() {
+	public Job HellotaskletJob() {
 		return jobBuilderFactory.get("HelloTaskletJob")
 								.incrementer(new RunIdIncrementer())
-								.start(HelloTaskletStep1())
+								.start(HelloTaskletStep())
 								.next(HelloTaskletStep2())
 								.build();
 	}

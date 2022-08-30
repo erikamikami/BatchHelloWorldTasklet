@@ -10,29 +10,29 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component("HelloTasklet") // 同じインターフェイスを実装するBeanを複数用意する場合、区別できるように名前を付ける
+@Component("HelloTasklet")
 @StepScope
 @Slf4j
 public class HelloTasklet implements Tasklet{
-
+	
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-		log.info("Hello, Tasklet!!!!!!!");
+		log.info("Hello Tasklet");
 		
 		// jobExecutionContextの取得
-		ExecutionContext jobContext = contribution.getStepExecution()
-													.getJobExecution()
-													.getExecutionContext();
+		ExecutionContext jobExecutionContext = contribution.getStepExecution()
+															.getJobExecution()
+															.getExecutionContext();
 		
-		// Mapに値を登録
-		jobContext.put("jobKey", "jobValue");
+		// jobの値をMapに登録
+		jobExecutionContext.put("jobKey", "jobValue");
 		
 		// stepExecutionContextの取得
-		ExecutionContext stepContext = contribution.getStepExecution()
-													.getExecutionContext();
+		ExecutionContext stepExecutionContext = contribution.getStepExecution()
+															.getExecutionContext();
 		
-		// Mapに値を登録
-		stepContext.put("stepKey", "stepValue");
+		// Stepの値をMapに登録
+		stepExecutionContext.put("stepKey", "stepValue");
 		
 		return RepeatStatus.FINISHED;
 	}
