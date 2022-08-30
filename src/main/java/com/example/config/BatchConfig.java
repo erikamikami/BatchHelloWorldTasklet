@@ -6,40 +6,54 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.example.tasklet.HelloTasklet;
+import com.example.tasklet.HelloTasklet2;
+
 @Configuration
-@EnableBatchProcessing // SpringBatchの設定クラスであること明示
+@EnableBatchProcessing
 public class BatchConfig {
 	
-	// jobを生成する
 	@Autowired
 	private JobBuilderFactory jobBuilderFactory;
 	
-	// stepを生成する
 	@Autowired
 	private StepBuilderFactory stepBuilderFactory;
 	
+	// HelloTasklet
 	@Autowired
-	private Tasklet helloTasklet;
+	@Qualifier("HelloTasklet")
+	private HelloTasklet helloTasklet;
 	
-	// stepを生成する
+	// HelloTasklet2
+	@Autowired
+	@Qualifier("HelloTasklet2")
+	private HelloTasklet2 helloTasklet2;
+	
+	// Stepの作成
 	@Bean
-	public Step taskletStep1() {
-		return stepBuilderFactory.get("HelloTaskletStep1") // 引数にstepの名前を設定。これがDBに登録され、いつどのstepが実行されたのか確認できるようになる
-								.tasklet(helloTasklet) // stepをtaskletに設定する。Taskletインターフェイスを実装したクラスを引数に。
-								.build();
+	public Step HelloTaskletStep1() {
+		return stepBuilderFactory.get("HelloTaskletStep").tasklet(helloTasklet).build();
 	}
 	
+	// Stepの生成
 	@Bean
-	public Job taskletJob() {
-		return jobBuilderFactory.get("HelloWorldTaskletJob") // 引数にjobの名前を設定。これがDBに登録され、いつどのjobが実行されたのか確認できるようになる
-								.incrementer(new RunIdIncrementer()) // jobのIDをインクリメントさせるクラスを指定。主キーとなるjobIDを重複させないためにインクリメンターが必要
-								.start(taskletStep1()) // 最初に実行するStepを指定する
-								.build();
+	public Step HelloTaskletStep2() {
+		return stepBuilderFactory.get("HelloTaskletStep2").tasklet(helloTasklet2).build();
 	}
 	
+	// jobの作成
+	@Bean
+	public Job HelloTaskletJob() {
+		return jobBuilderFactory.get("HelloTaskletJob")
+								.incrementer(new RunIdIncrementer())
+								.start(HelloTaskletStep1())
+								.next(HelloTaskletStep2())
+								.build();
+	}
+
 }
