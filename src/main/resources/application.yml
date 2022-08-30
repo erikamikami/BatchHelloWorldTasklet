@@ -1,3 +1,5 @@
 spring:
   autoconfigure:
     exclude: org.springframework.boot.devtools.autoconfigure.DevToolsDataSourceAutoConfiguration
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
